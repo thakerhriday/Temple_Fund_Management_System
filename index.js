@@ -17,7 +17,7 @@ const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
     database: 'ieee',
-    password:"Arnav@112",
+    password: String(process.env.POSTGRES_PASSWORD),
     port: 5432,
 });
 // Authentication middleware
