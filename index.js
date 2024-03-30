@@ -6,6 +6,8 @@ import bodyParser from "body-parser";
 const app = express();
 const port = 3000;
 import dotenv from 'dotenv';
+import bcrypt from 'bcrypt'; 
+const saltRounds=5;
 dotenv.config();
 
 
@@ -15,8 +17,7 @@ const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
     database: 'ieee',
-    password: String(process.env.POSTGRES_PASSWORD),
-
+    password:"Arnav@112",
     port: 5432,
 });
 // Authentication middleware
@@ -63,8 +64,9 @@ app.post('/api/signup', async (req, res) => {
     const { id, password } = req.body;
 
     try {
+        const hashedPassword = await bcrypt.hash(password, saltRounds); // Hash the password
         const client = await pool.connect();
-        await client.query(`UPDATE users SET password = $1 WHERE id = $2`, [password, id]);
+        await client.query(`UPDATE users SET password = $1 WHERE id = $2`, [hashedPassword, id]);
         client.release();
         res.json({ message: 'User signed up successfully' });
     } catch (err) {
@@ -72,25 +74,32 @@ app.post('/api/signup', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
-
 // Login API
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
 
     try {
         const client = await pool.connect();
-        const result = await client.query(`SELECT * FROM users WHERE email = $1 AND password = $2`, [email, password]);
+        const result = await client.query(`SELECT * FROM users WHERE email = $1`, [email]);
         client.release();
         const user = result.rows[0];
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
+
+        // Compare the provided password with the hashed password stored in the database
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (!passwordMatch) {
+            return res.status(401).json({ message: 'Incorrect password' });
+        }
+        delete user.password;
         res.json(user);
     } catch (err) {
         console.error('Error executing query', err);
         res.status(500).json({ error: err.message });
     }
 });
+
 
 
 app.post('/api/logout', (req, res) => {
