@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temple Page</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Custom styles */
+        body {
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+        }
+        header a {
+            color: white;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+        .navbar-text {
+            margin-right: 10px;
+        }
+        .content {
+            padding: 20px;
+        }
+        .total-amount {
+            font-size: 24px;
+            color: #28a745; /* Green color for positive values */
+        }
+        .transaction-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f8f9fa; /* Light gray background */
+        }
+        .transaction-amount {
+            font-size: 18px;
+            color: #007bff; /* Blue color for transaction amounts */
+        }
+        .transaction-timestamp {
+            font-size: 14px;
+            color: #6c757d; /* Gray color for timestamps */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark justify-content-end">
+            <span class="navbar-text mr-auto">🕉️🔱🕉️ Temple A1</span>
+            
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#donations">Donations</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/expenses.html">Expenses</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="logout.html">Logout</a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="content">
+        <section id="donations">
+            <h2>Donations</h2>
+            <div id="donationsList">
+                <!-- Render total amount received dynamically -->
+                <p class="total-amount">Total amount received: ETH <%= totalAmount %></p>
+            </div>
+        </section>
+
+        <section id="transactions">
+            <h2>Transaction History</h2>
+            <div id="transactionHistory">
+                <!-- Render transaction history dynamically -->
+                <ul>
+                    <% transactions.forEach((transaction, index) => { %>
+                        <li class="transaction-item">
+                            <span class="transaction-amount">ETH<%= transaction.amount %></span>
+                            <span class="transaction-address"><p>from</p><%= transaction.recipient_address %></span>
+                            <span class="transaction-timestamp"><%= transaction.timestamp %></span>
+                        </li>
+                    <% }); %>
+                </ul>
+            </div>
+        </section>
+        
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fetch transactions from the backend
+            axios.get('/transactions')
+                .then(function(response) {
+                    const transactions = response.data.transactions;
+
+                    // Calculate total amount received
+                    const totalAmount = transactions.reduce((total, transaction) => total + transaction.amount, 0);
+
+                    // Log total amount to console
+                    console.log("Total amount received:", totalAmount);
+
+                    // Render total amount received dynamically
+                    document.getElementById('donationsList').innerHTML += `<p class="total-amount">Total amount received: TempleToken $${totalAmount}</p>`;
+
+                    // Log each transaction's timestamp to console
+                    transactions.forEach((transaction, index) => {
+                        console.log(`Transaction ${index + 1} Timestamp:`, transaction.timestamp);
+                        console.log("from ${recipent_address}",transaction.recipient_address);
+                    });
+                })
+                .catch(function(error) {
+                    console.error(error);
+                });
+        });
+    </script>
+</body>
+</html>

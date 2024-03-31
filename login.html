@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temple Donation Page</title>
+    <link rel="stylesheet" href="./index.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+        header a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .container {
+            max-width: 300px;
+            margin: 50px auto;
+            padding: 30px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+        }
+        input[type="text"], input[type="password"], input[type="submit"], select {
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 15px; /* Increased padding */
+            font-size: 16px; /* Increased font size */
+            box-sizing: border-box;
+        }
+        .hidden {
+            display: none;
+        }
+        /* Custom style for the welcome message */
+        #welcomeMessage {
+            font-size: 24px; /* Increased font size */
+            text-transform: uppercase; /* Convert text to uppercase */
+            color: #333; /* Text color */
+            text-align: center; /* Center align the text */
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Temple Donation</h1>
+    <nav>
+        <a href="#about">About</a>
+        <a href="#history">History</a>
+    </nav>
+</header>
+
+<!-- Welcome Line -->
+<p id="welcomeMessage">Welcome to the Temple Donation Page</p>
+
+<div class="container" id="selectionForm">
+    <h2>Select User Type</h2>
+    <select id="userTypeSelect">
+        <option value="user">User</option>
+        <option value="authority">Authority</option>
+    </select>
+    <button onclick="showSignupOrLogin()">Next</button>
+</div>
+
+<div class="container hidden" id="signupOrLoginForm">
+    <h2>Select Action</h2>
+    <select id="actionSelect">
+        <option value="signup">Signup</option>
+        <option value="login">Login</option>
+    </select>
+    <button onclick="showForm()">Next</button>
+</div>
+
+<div class="container hidden" id="formContainer">
+    <h2 id="formTitle"></h2>
+    <form id="loginSignupForm">
+        <input type="text" id="username" placeholder="Username" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+
+<div class="container hidden" id="donationFormContainer">
+    <h2>Make a Donation</h2>
+    <form id="donationForm">
+        <input type="text" id="templeAddress" placeholder="Temple Address" required>
+        <input type="number" id="donationAmount" placeholder="Donation Amount" required>
+        <input type="submit" value="Donate">
+    </form>
+</div>
+
+<script>
+    function showSignupOrLogin() {
+        document.getElementById('selectionForm').classList.add('hidden');
+        document.getElementById('signupOrLoginForm').classList.remove('hidden');
+        resetFormFields();
+    }
+    function showForm() {
+    var userType = document.getElementById('userTypeSelect').value;
+    var action = document.getElementById('actionSelect').value;
+    var formTitle = action.charAt(0).toUpperCase() + action.slice(1) + ' ' + userType;
+
+    document.getElementById('signupOrLoginForm').classList.add('hidden');
+    document.getElementById('formContainer').classList.remove('hidden');
+    document.getElementById('formTitle').innerText = formTitle;
+
+    // Handle form submission based on action and user type
+    document.getElementById('loginSignupForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent default form submission
+        
+        var username = document.getElementById('username').value;
+        var password = document.getElementById('password').value;
+
+        // Make a POST request to the server endpoint for user authentication
+        fetch('/authenticate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password,
+                userType: userType,
+                action: action
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                // Handle successful authentication
+                if (userType === 'authority') {
+                    window.location.href = 'author.html';
+                } else {
+                    window.location.href = 'index.html';
+                }
+            } else {
+                // Handle failed authentication
+                alert('successfull');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+
+    resetFormFields();
+}
+
+
+    // Function to reset the form fields
+    function resetFormFields() {
+        document.getElementById('username').value = '';
+        document.getElementById('password').value = '';
+        document.getElementById('templeAddress').value = '';
+        document.getElementById('donationAmount').value = '';
+    }
+
+    // Simulating form submission for login/signup
+    document.getElementById("loginSignupForm").addEventListener("submit", function(event){
+        event.preventDefault(); // Prevent actual form submission for demonstration purpose
+        
+        // Redirect to appropriate page after successful login or signup
+        var userType = document.getElementById('userTypeSelect').value;
+        if (userType === "authority") {
+            window.location.href = "author.html";
+        } else {
+            window.location.href = "index.html";
+        }
+    });
+
+    // Donation form submission
+    document.getElementById("donationForm").addEventListener("submit", function(event){
+        event.preventDefault(); // Prevent actual form submission for demonstration purpose
+        
+        // Here you can handle the donation submission, for demonstration purpose, let's just alert
+        alert("Donation Successful!");
+    });
+</script>
+
+</body>
+</html>
