@@ -1,16 +1,22 @@
-const express = require("express");
-const path = require("path");
+import express from "express";
+import path from "path";
+import pg from "pg";
+import axios from "axios";
+import { randomInt } from "crypto";
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 const app = express();
-const pg = require("pg");
-const axios=require("axios");
-const { randomInt } = require("crypto");
+
 app.set('view engine', 'ejs');
+
 // Set up PostgreSQL client
 const db = new pg.Client({
     user: "postgres",
     host: "localhost",
     database: "pbl",
-    password: String(process.env.POSTGRESS_PASSWORD),
+    password: "Arnav@112",
     port: "5432",
 });
 db.connect();
@@ -21,7 +27,6 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "login.html"));
 });
-
 
 // Handle GET request to fetch transaction details from Etherscan API
 app.get("/transactions/address", async (req, res) => {
@@ -46,44 +51,48 @@ app.get("/transactions/address", async (req, res) => {
         res.status(500).send("Error fetching transactions");
     }
 });
-app.get("/temples",async(req,res)=>{
-    res.sendFile(path.join(__dirname,"temples.html"));
-});
-app.get("/index.html",async(req,res)=>{
-    res.sendFile(path.join(__dirname,"index.html"));
-});
-app.get("/author.html",async(req,res)=>{
-    res.sendFile(path.join(__dirname,"author.html"));
-})
-app.get("/admin.html",async(req,res)=>{
-    res.sendFile(path.join(__dirname,"admin.html"));
+
+app.get("/temples", async (req, res) => {
+    res.sendFile(path.join(__dirname, "temples.html"));
 });
 
-// Handle POST request to submit transaction
+app.get("/index.html", async (req, res) => {
+    res.sendFile(path.join(__dirname, "index.html"));
+});
+
+app.get("/author.html", async (req, res) => {
+    res.sendFile(path.join(__dirname, "author.html"));
+});
+
+app.get("/admin.html", async (req, res) => {
+    res.sendFile(path.join(__dirname, "admin.html"));
+});
+
 // Handle POST request to submit transaction
 app.post("/submit", async (req, res) => {
     const address = req.body.recipientAddress;
     const amount = req.body.amount;
-    const txhash=112*randomInt;
+    const txhash = 112 * randomInt;
     // Send transaction using MetaMask
-        // Insert transaction details into the database
-       db.query(
-            "INSERT INTO transactions (tx_hash, recipient_address, amount) VALUES ($1, $2, $3) RETURNING *",
-            [txhash, address, amount],
-            (err, result) => {
-                if (err) {
-                    console.error("Error inserting transaction:", err);
-                    res.status(500).send("Error submitting transaction");
-                } else {
-                    console.log("Transaction inserted:", result.rows[0]);
-                    res.send("Transaction submitted successfully");
-                }
+    // Insert transaction details into the database
+    db.query(
+        "INSERT INTO transactions (tx_hash, recipient_address, amount) VALUES ($1, $2, $3) RETURNING *",
+        [txhash, address, amount],
+        (err, result) => {
+            if (err) {
+                console.error("Error inserting transaction:", err);
+                res.status(500).send("Error submitting transaction");
+            } else {
+                console.log("Transaction inserted:", result.rows[0]);
+                res.send("Transaction submitted successfully");
             }
-        );
-    });
+        }
+    );
+});
+
 // Handle GET request to submit transaction and store in database
 app.get("/submit", (req, res) => {
-    const txHash =12;
+    const txHash = 12;
     const recipientAddress = req.query.recipientAddress;
     const amount = req.query.amount;
 
@@ -105,26 +114,28 @@ app.get("/submit", (req, res) => {
         }
     });
 });
+
 app.get('/admin', async (req, res) => {
     try {
-      // Query the database for transaction data
-      const { rows } = await db.query('SELECT recipient_address, amount, timestamp FROM transactions');
-  
-      // Calculate total amount received
-      const result = await db.query('select sum(amount) from transactions');
-      const totalAmount = result.rows[0].sum;
+        // Query the database for transaction data
+        const { rows } = await db.query('SELECT recipient_address, amount, timestamp FROM transactions');
 
-  
-      // Render the EJS template with data
-      res.render('admin', { totalAmount, transactions: rows });
+        // Calculate total amount received
+        const result = await db.query('select sum(amount) from transactions');
+        const totalAmount = result.rows[0].sum;
+
+        // Render the EJS template with data
+        res.render('admin', { totalAmount, transactions: rows });
     } catch (error) {
-      console.error('Error querying database:', error);
-      res.status(500).json({ error: 'Internal server error' });
+        console.error('Error querying database:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
-  });
-  app.get("/expenses.html",async(req,res)=>{
-    res.sendFile(__dirname,"expenses.html");
-  })
+});
+
+app.get("/expenses.html", async (req, res) => {
+    res.sendFile(__dirname, "expenses.html");
+});
+
 // Handle POST request to submit transaction and store in database
 app.listen(5000, () => {
     console.log("Server listening on port 5000");
