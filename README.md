@@ -12,7 +12,8 @@ Temples in India receive donations on a very large scale yet they use old centra
 To develop a  fund management system for temples which will be accessed by two main users:Temple admin and User via web-technology using blockchain methodology.This web-technology solves the problem of discrepancies in fund management occurring in today's time it has increased the level of transparency and eradicates middlemen between the user and temple.The user is aware where his funds are being spent with the help of blockchain each and every transaction is on a distributed ledger which will be accessible to user.Morever each transaction is triggered by smart contract and thus is immutable helping in achieving the desired goal.
 
 # System Architecture
-![Agile Diagram] [https://drive.google.com/file/d/14j5wkh1sHD753xU8VpdzRvzm4CPVXkzo/view?usp=sharing]
+![image](https://github.com/thakerhriday/Temple_Fund_Management_System/assets/143881496/ccea92fb-70d3-4842-94d1-eebd61c295fe)
+
 
 # Conclusion
 Our project aims to develop a  fund management system for temples which will be accessed by two main users:Temple admin and User via web-technology using blockchain methodology.This web-technology solves the problem of discrepancies in fund management occurring in today's time it has increased the level of transparency and eradicates middlemen between the user and temple.The user is aware where his funds are being spent with the help of blockchain each and every transaction is on a distributed ledger which will be accessible to user.Morever each transaction is triggered by smart contract and thus is immutable helping in achieving the desired goal.We have focused on improving user experience by incorporating proper frontend meeting user needs.
