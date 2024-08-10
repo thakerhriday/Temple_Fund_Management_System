@@ -14,7 +14,7 @@ To develop a  fund management system for temples which will be accessed by two m
 # System Architecture
 ![image](https://github.com/thakerhriday/Temple_Fund_Management_System/assets/143881496/6e8eaee0-f659-4abf-a397-56bd4ef626d4)
 #Working Model
-[![Watch the video](https://youtu.be/sk4hWT-_EHI)
+![Watch the video](https://youtu.be/sk4hWT-_EHI)
 
 # Conclusion
 Our project has successfully developed a  fund management system for temples which will be accessed by two main users:Temple admin and User via web-technology using blockchain methodology.This web- based blockchain technology solves the problem of discrepancies in fund management occurring in today's time. Our project makes use of smart contact to automatically distribute funds amongst different temple expenditure accounts after reaching a certain threshold value. Morever each transaction is triggered by smart contract and thus is immutable helping in achieving the desired goal.It has increased the level of transparency and eradicates middlemen between the user and temple.The user is aware where his funds are being spent with the help of blockchain each and every transaction is on a distributed ledger which will be accessible to user thus increasing donor trust.We have focused on improving user experience by incorporating proper frontend meeting user needs.
